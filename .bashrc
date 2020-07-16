@@ -141,7 +141,7 @@ function cdls() {
     # cdがaliasでループするので\をつける
     \cd "$@";
     if [ "$?" -eq 0 ];then
-        ls --color=auto
+        ls -la --color=auto
     fi
 }
 
