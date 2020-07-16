@@ -288,7 +288,7 @@ shopt -s no_empty_cmd_completion
 export HISTCONTROL=ignoreboth
 export HISTIGNORE=cd:history:ls:which   #you can use wild cart(*,?)
 # Ctrl-dでログアウトしない
-set -o ignoreeof
+#set -o ignoreeof
 # GUIで認証しない
 unset SSH_ASKPASS
 # lessでカラー表示
