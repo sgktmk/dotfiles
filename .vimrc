@@ -1,405 +1,356 @@
-""""""""""""""""""
-"""   .vimrc   """
-""""""""""""""""""
-if !empty(&viminfo)
-    set viminfo='50,<1000,s100,\"50,! " YankRing用に!を追加
+" setting
+if has('vim_starting')
+    set nocompatible
 endif
-set shellslash              " Windowsでディレクトリパスの区切り文字に / を使えるようにする
-set lazyredraw              " マクロなどを実行中は描画を中断
-set complete+=k             " 補完に辞書ファイル追加
-set history=500
-if has('unix')
-    let $LANG = "C"
+
+if !filereadable(expand('~/.vim/autoload/plug.vim'))
+    if !executable("curl")
+        echoerr "You have to install curl or first install vim-plug yourself!"
+        execute "q!"
+    endif
+    echo "Installing Vim-Plug..."
+    echo ""
+    silent !\curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let g:not_finish_vimplug = "yes"
+    autocmd VimEnter * PlugInstall
+endif
+
+" plugin
+call plug#begin(expand('~/.vim/plugged'))
+Plug 'mattn/vim-starwars'
+"" space + ne -> sidebar
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+"" ga -> align
+Plug 'junegunn/vim-easy-align'
+"" space + qr -> exec script
+Plug 'thinca/vim-quickrun'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+"" gcc -> comment
+Plug 'tpope/vim-commentary'
+"" option bar
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"" auto bracket
+Plug 'Raimondi/delimitMate'
+Plug 'tpope/vim-surround'
+"" auto format
+Plug 'Chiel92/vim-autoformat'
+"" error detect
+Plug 'scrooloose/syntastic'
+"" delete white space
+Plug 'bronson/vim-trailing-whitespace'
+"" auto complete
+Plug 'sheerun/vim-polyglot'
+Plug 'Valloric/YouCompleteMe'
+Plug 'ervandew/supertab'
+"" html
+Plug 'hail2u/vim-css3-syntax'
+Plug 'gorodinskiy/vim-coloresque'
+Plug 'tpope/vim-haml'
+Plug 'mattn/emmet-vim'
+"" javascript
+Plug 'jelera/vim-javascript-syntax'
+"" php
+Plug 'arnaud-lb/vim-php-namespace'
+"" python
+Plug 'davidhalter/jedi-vim'
+Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
+"" space + sh -> vimshell
+Plug 'Shougo/vimshell.vim'
+"" snippet
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+call plug#end()
+filetype plugin indent on
+let mapleader="\<Space>"
+
+"" ultisnip
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsEditSplit="vertical"
+
+"" youcompleteme
+let g:ycm_server_python_interpreter = '/usr/bin/python2.7'
+let g:ycm_python_binary_path = '/usr/bin/python2.7'
+let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/.ycm_extra_conf.py'
+let g:ycm_auto_trigger = 1
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_key_list_select_completion = ['<Down>']
+let g:ycm_key_list_previous_completion = ['<Up>']
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "ᐅ"
+let g:ycm_key_list_stop_completion = ['<C-y>', '<Enter>']
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:SuperTabDefaultCompletionType = '<C-n>'
+let g:make = 'gmake'
+if exists('make')
+    let g:make = 'make'
+endif
+
+"" auto-format
+au BufWrite * :Autoformat
+
+"" vim-airline
+let g:airline_theme = 'powerlineish'
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline_skip_empty_sections = 1
+
+"" emmet
+autocmd FileType html imap <buffer><expr><tab>
+            \ emmet#isExpandable() ? "\<plug>(emmet-expand-abbr)" :
+            \ "\<tab>"
+
+"" nerdtree
+let g:NERDTreeChDirMode=2
+let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
+let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
+let g:NERDTreeShowBookmarks=1
+let g:nerdtree_tabs_focus_on_files=1
+let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
+let g:NERDTreeWinSize = 30
+let NERDTreeShowHidden=1
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
+nnoremap <Leader>dir :NERDTreeTabsToggle<CR>
+autocmd BufWritePre * :FixWhitespace
+augroup NERD
+    au!
+    autocmd VimEnter * NERDTree
+    autocmd VimEnter * wincmd p
+augroup END
+
+"" quickrun
+nnoremap <Leader>go :QuickRun<CR>
+nnoremap <C-U>qr :QuickRun<CR>
+let g:quickrun_config={'*': {'split': ''}}
+let g:quickrun_config.cpp = {
+            \   'command': 'g++',
+            \   'cmdopt': '-std=c++11'
+            \ }
+
+"" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+"" vimshell
+"" nnoremap <Leader>sh :VimShellPop<CR>
+nnoremap <Leader>sh :vertical terminal<CR>
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_prompt =  '$ '
+
+"" syntastic
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_error_symbol='✗'
+let g:syntastic_warning_symbol='⚠'
+let g:syntastic_style_error_symbol = '✗'
+let g:syntastic_style_warning_symbol = '⚠'
+let g:syntastic_auto_loc_list=1
+let g:syntastic_aggregate_errors = 1
+
+"" jedi-vim
+let g:jedi#popup_on_dot = 0
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = "<leader>d"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#rename_command = "<leader>r"
+let g:jedi#show_call_signatures = "0"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#smart_auto_mappings = 0
+let g:jedi#force_py_version = 3
+autocmd FileType python setlocal completeopt-=preview
+
+"" syntastic
+let g:syntastic_python_checkers=['python', 'flake8']
+let g:polyglot_disabled = ['python']
+let python_highlight_all = 1
+
+"" vim-airline
+let g:airline#extensions#virtualenv#enabled = 1
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+if !exists('g:airline_powerline_fonts')
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+    let g:airline_left_sep          = '▶'
+    let g:airline_left_alt_sep      = '»'
+    let g:airline_right_sep         = '◀'
+    let g:airline_right_alt_sep     = '«'
+    let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+    let g:airline#extensions#readonly#symbol   = '⊘'
+    let g:airline#extensions#linecolumn#prefix = '¶'
+    let g:airline#extensions#paste#symbol      = 'ρ'
+    let g:airline_symbols.linenr    = '␊'
+    let g:airline_symbols.branch    = '⎇'
+    let g:airline_symbols.paste     = 'ρ'
+    let g:airline_symbols.paste     = 'Þ'
+    let g:airline_symbols.paste     = '∥'
+    let g:airline_symbols.whitespace = 'Ξ'
 else
-    let $LANG = "en"
-endif
-execute "language " $LANG
-execute "set langmenu=".$LANG
-let mapleader = "\<Space>"
-let maplocalleader = "\\"
-set timeout timeoutlen=1000 ttimeoutlen=10
-
-" タブ周り
-" tabstopはTab文字を画面上で何文字分に展開するか
-" shiftwidthはcindentやautoindent時に挿入されるインデントの幅
-" softtabstopはTabキー押し下げ時の挿入される空白の量，0の場合はtabstopと同じ，BSにも影響する
-set tabstop=4 shiftwidth=4 softtabstop=0
-set expandtab              " タブを空白文字に展開
-"set noautoindent nosmartindent " 自動インデント，スマートインデント
-
-" 入力補助
-set backspace=indent,eol,start " バックスペースでなんでも消せるように
-set formatoptions+=m           " 整形オプション，マルチバイト系を追加
-
-" コマンド補完
-set wildmenu           " コマンド補完を強化
-set wildmode=longest,list,full " リスト表示，最長マッチ
-
-" 検索関連
-set wrapscan   " 最後まで検索したら先頭へ戻る
-set ignorecase " 大文字小文字無視
-set smartcase  " 大文字ではじめたら大文字小文字無視しない
-set incsearch  " インクリメンタルサーチ
-set hlsearch   " 検索文字をハイライト
-
-" ファイル関連
-set nobackup   " バックアップ取らない
-set autoread   " 他で書き換えられたら自動で読み直す
-set noswapfile " スワップファイル作らない
-set hidden     " 編集中でも他のファイルを開けるようにする
-
-" ビープ音除去
-set vb t_vb=
-
-" tags
-if has('path_extra')
-  setglobal tags-=./tags tags-=./tags; tags^=./tags;
+    let g:airline#extensions#tabline#left_sep = ''
+    let g:airline#extensions#tabline#left_alt_sep = ''
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_symbols.branch = ''
+    let g:airline_symbols.readonly = ''
+    let g:airline_symbols.linenr = ''
 endif
 
-"表示関連
-set showmatch         " 括弧の対応をハイライト
-set showcmd           " 入力中のコマンドを表示
-set number            " 行番号表示
-set wrap              " 画面幅で折り返す
-set list              " 不可視文字表示
-"set listchars=tab:>  " 不可視文字の表示方法
-set notitle           " タイトル書き換えない
-set scrolloff=5       " 行送り
+" function
+"" xaml
+augroup MyXML
+    autocmd!
+    autocmd Filetype xml inoremap <buffer> </ </<C-x><C-o>
+    autocmd Filetype html inoremap <buffer> </ </<C-x><C-o>
+augroup END
 
-" ステータスライン関連
-set laststatus=2
-set statusline=%-(%f%m%h%r%w%)%=%{&ff}\|%{&fenc}\ %y%l,%c\ %0P
+"" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
+augroup vimrc-sync-fromstart
+    autocmd!
+    autocmd BufEnter * :syntax sync maxlines=200
+augroup END
 
-" ウィンドウ関連
-set splitbelow
-set splitright
+"" Remember cursor position
+augroup vimrc-remember-cursor-position
+    autocmd!
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
 
-" 補完
-set completeopt=longest,menuone,preview
-
-
-" ==================== カラー ==================== "
-colorscheme default          " カラースキーム
-syntax on " シンタックスカラーリングオン
-filetype indent on " ファイルタイプによるインデントを行う
-filetype plugin on " ファイルタイプごとのプラグインを使う
-" ポップアップメニューの色変える
-"highlight Pmenu ctermbg=lightcyan ctermfg=black
-"highlight PmenuSel ctermbg=blue ctermfg=black
-"highlight PmenuSbar ctermbg=darkgray
-"highlight PmenuThumb ctermbg=lightgray
-highlight Comment ctermfg=blue
-
-" 行番号のハイライト
-set cursorline
-highlight clear CursorLine
-
-autocmd WinEnter    * set cursorline
-autocmd WinLeave    * set nocursorline
-autocmd InsertEnter * set nocursorline
-autocmd InsertLeave * set cursorline
-
-" ==================== カーソル ==================== "
-let &t_SI .= "\<Esc>[5 q"
-let &t_EI .= "\<Esc>[1 q"
-if (v:version == 704 && has('patch687')) || v:version >= 705
-    let &t_SR .= "\<Esc>[3 q"
+"" txt
+augroup vimrc-wrapping
+    autocmd!
+    autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+augroup END
+if !exists('*s:setupWrapping')
+    function s:setupWrapping()
+        set wrap
+        set wm=2
+        set textwidth=79
+    endfunction
 endif
 
-" ==================== エンコーディング関連 ==================== "
-set encoding=utf-8
-set fileencodings=utf-8,euc-jp,iso-2022-jp,cp932,sjis
-set fileformats=unix,dos,mac
+"" make/cmake
+augroup vimrc-make-cmake
+    autocmd!
+    autocmd FileType make setlocal noexpandtab
+    autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+augroup END
 
+"" python
+augroup vimrc-python
+    autocmd!
+    autocmd FileType python setlocal
+                \ formatoptions+=croq softtabstop=4
+                \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+augroup END
 
-" ==================== キーマップ ==================== "
-" 表示行単位で移動
-noremap j gj
-noremap k gk
-vnoremap j gj
-vnoremap k gk
+" shortcut leader=Space
+"" save
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>qqq :q!<CR>
+nnoremap <Leader>eee :e<CR>
+nnoremap <Leader>wq :wq<CR>
+nnoremap <Leader>nn :noh<CR>
 
-" undo behavior
-inoremap <BS> <C-g>u<BS>
-inoremap <CR> <C-g>u<CR>
-inoremap <DEL> <C-g>u<DEL>
-inoremap <C-w> <C-g>u<C-w>
+"" split
+nnoremap <Leader>s :<C-u>split<CR>
+nnoremap <Leader>v :<C-u>vsplit<CR>
 
-" Emacs style
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
+"" Tabs
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
+nnoremap <Leader>t :tabnew<CR>
 
-" function key
-imap <F1>  <Esc><F1>
-imap <F2>  <Esc><F2>
-imap <F3>  <Esc><F3>
-imap <F4>  <Esc><F4>
-imap <F5>  <Esc><F5>
-imap <F6>  <Esc><F6>
-imap <F7>  <Esc><F7>
-imap <F8>  <Esc><F8>
-imap <F9>  <Esc><F9>
-imap <F10> <Esc><F10>
-imap <F11> <Esc><F11>
-imap <F12> <Esc><F12>
-cmap <F1>  <Esc><F1>
-cmap <F2>  <Esc><F2>
-cmap <F3>  <Esc><F3>
-cmap <F4>  <Esc><F4>
-cmap <F5>  <Esc><F5>
-cmap <F6>  <Esc><F6>
-cmap <F7>  <Esc><F7>
-cmap <F8>  <Esc><F8>
-cmap <F9>  <Esc><F9>
-cmap <F10> <Esc><F10>
-cmap <F11> <Esc><F11>
-cmap <F12> <Esc><F12>
+"" ignore wrap
+nnoremap j gj
+nnoremap k gk
+nnoremap <Down> gj
+nnoremap <Up> gk
 
-" ハイライト消す
-nmap <silent> gh :nohlsearch<CR>
-
-"noremap ^? <Del>
-
-" コピー
+"" Sft + y => yunk to EOL
 nnoremap Y y$
 
-" インクリメント設定
-noremap + <C-a>
-noremap - <C-x>
+"" + => increment
+nnoremap + <C-a>
 
-vmap ,y "+y
-vmap ,d "+d
-nmap ,p "+p
-nmap ,P "+P
-vmap ,p "+p
-vmap ,P "+P
+"" - => decrement
+nnoremap - <C-x>
 
+"" move 15 words
+nmap <silent> <Tab> 15<Right>
+nmap <silent> <S-Tab> 15<Left>
+nmap <silent> ll 15<Right>
+nmap <silent> hh 15<Left>
+nmap <silent> jj 15<Down>
+nmap <silent> kk 15<Up>
 
-" xはレジスタに登録しない
-nnoremap x "_x
+"" pbcopy for OSX copy/paste
+vmap <C-x> :!pbcopy<CR>
+vmap <C-c> :w !pbcopy<CR><CR>
 
-if &term == "screen"
-    map <esc>[1;5D <C-Left>
-    map <esc>[1;5C <C-Right>
-endif
+"" move line/word
+nmap <C-e> $
+nmap <C-a> 0
+nmap <C-f> W
+nmap <C-b> B
+imap <C-e> <C-o>$
+imap <C-a> <C-o>0
+imap <C-f> <C-o>W
+imap <C-b> <C-o>B
 
-" Enable metakey
-"execute "set <M-p>=\ep"
-"execute "set <M-n>=\en"
-
-" move buffer
-nnoremap <F2> :bprev<CR>
-nnoremap <F3> :bnext<CR>
-
-" move tab
-nnoremap <S-F2> gT
-nnoremap <S-F3> gt
-
-nnoremap <F4> :bdelete<CR>
-nnoremap <F5> <C-l>
-
-" move changes
-nnoremap <F10> g;
-nnoremap <F11> g,
-
-" change paragraph
-nnoremap ( {
-nnoremap ) }
-
-" For search
-nnoremap v/ /\v
-vnoremap * y/<C-R>"<CR>
-vnoremap z/ <ESC>/\%V
-vnoremap z? <ESC>?\%V
-
-" For replace
-nnoremap gr gd[{V%::s/<C-R>///gc<left><left><left>
-nnoremap gR gD:%s/<C-R>///gc<left><left><left>
-
-" Use <C-L> to clear the highlighting of :set hlsearch.
-if maparg('<C-L>', 'n') ==# ''
-    nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-endif
-
-" Undoable<C-w> <C-u>
-inoremap <C-w> <C-g>u<C-w>
-inoremap <C-u> <C-g>u<C-u>
-
-" Change current directory
-nnoremap ,cd :lcd %:p:h<CR>:pwd<CR>
-
-" Delete buffer
-nnoremap ,bd :bdelete<CR>
-
-" Delete all marks
-nnoremap ,md :delmarks!<CR>
-
-" Change encoding
-nnoremap ,u :e ++enc=utf-8<CR>
-nnoremap ,s :e ++enc=cp932<CR>
-nnoremap ,e :e ++enc=euc-jp<CR>
-nnoremap ,j :e ++enc=iso-2022-jp<CR>
-
-" tags jump
-nnoremap <C-]> g<C-]>
-
-" search continue
-nnoremap <expr> n  'Nn'[v:searchforward]
-nnoremap <expr> N  'nN'[v:searchforward]
-
-" edit macro
-nnoremap ,me  :<c-u><c-r><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
-
-" visual shift
-xnoremap <  <gv
-xnoremap >  >gv
-
-" completion
-inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
-inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
-inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
-inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
-inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
-.
-" split gf
-nnoremap <C-w>F :vertical wincmd f<CR>
-
-" ==================== command ==================== "
-" change indent
-command! -nargs=1 IndentChange set tabstop=<args> shiftwidth=<args>
-
-
-" ==================== autocmd ==================== "
-if has('autocmd')
-  " Put these in an autocmd group, so that we can delete them easily.
-  augroup vimrcEx
-    autocmd!
-    " 前回終了したカーソル行に移動
-    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
-    " ======== Undo ======== "
-    " アンドゥ
-    if has('persistent_undo')
-      set undodir=./.vimundo,~/.vim/vimundo
-      autocmd BufRead ~/* setlocal undofile
-    endif
-  augroup END
-  autocmd QuickfixCmdPost make,grep,grepadd,vimgrep,vimgrepadd cwin
-  autocmd QuickfixCmdPost lmake,lgrep,lgrepadd,lvimgrep,lvimgrepadd lwin
-endif
-
-" ======== 貼り付け設定 ======== "
-if &term =~ "xterm" || &term =~ "screen"
-    let &t_SI .= "\<Esc>[?2004h"
-    let &t_EI .= "\<Esc>[?2004l"
-
-    function! XTermPasteBegin(ret)
-        set pastetoggle=<f29>
-        set paste
-        return a:ret
-    endfunction
-
-    execute "set <f28>=\<Esc>[200~"
-    execute "set <f29>=\<Esc>[201~"
-    "map <expr> <f28> XTermPasteBegin("i")
-    imap <expr> <f28> XTermPasteBegin("<C-g>u")
-    "vmap <expr> <f28> XTermPasteBegin("c")
-    cmap <f28> <nop>
-    cmap <f29> <nop>
-endif
-
-" ======== Mouse Setting ======== "
-" In many terminal emulators the mouse works just fine, thus enable it.
-if has('mouse')
-  set mouse=""
-  " For screen.
-  if &term =~ "^screen"
-    augroup MyAutoCmd
-      autocmd!
-      autocmd VimLeave * :set mouse=
-    augroup END
-
-    " screenでマウスを使用するとフリーズするのでその対策
-    set ttymouse=xterm2
-  endif
-
-  if has('gui_running')
-    set mouse=a
-    " Show popup menu if right click.
-    set mousemodel=popup
-    " Don't focus the window when the mouse pointer is moved.
-    set nomousefocus
-    " Hide mouse pointer on insert mode.
-    set mousehide
-  endif
-endif
-
-" ==================== コード整形 ==================== "
-"末尾の空白をハイライトする
-"augroup HighlightTrailingSpaces
-"  autocmd!
-"  autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
-"  autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
-"augroup END
-
-if v:version >= 703
-    noremap <Plug>(ToggleColorColumn)
-            \ :<c-u>let &colorcolumn = len(&colorcolumn) > 0 ? '' :
-            \   join(range(81, 9999), ',')<CR>
-    nmap cc <Plug>(ToggleColorColumn)
-else
-    function! ToggleOldColorColumn(m)
-        if a:m != 0
-            let l:m = matchdelete(a:m)
-        else
-            let l:m = matchadd('turn', '^.\{80\}\zs.\+\ze')
-        endif
-        return l:m
-    endfunction
-    highlight turn gui=standout cterm=standout
-    let m = 0
-    nmap cc :let m = ToggleOldColorColumn(m)<CR>
-endif
-
-" ==================== コピー共有 ==================== "
-"クリップボード共有
-if has('clipboard')
-    if v:version >= 703
-        set clipboard=unnamedplus,unnamed
-    else
-        set clipboard+=unnamed
-    endif
-endif
-
-" ======== undo ======== "
-if has('persistent_undo')
-  set undodir=~/.vim/undo
-  augroup vimrc-undofile
-    autocmd!
-    autocmd BufReadPre ~/* setlocal undofile
-  augroup END
-endif
-
-" ======== matchit.vim ======== "
-if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
-  runtime! macros/matchit.vim
-endif
-
-
-" ==================== Local Configuration ==================== "
-if filereadable(expand('~/.vimrc.local'))
-  source ~/.vimrc.local
-endif
-
-
-" ==================== Plugin ======================
-call plug#begin('~/.vim/plugged')
-Plug 'Valloric/YouCompleteMe'
-call plug#end()
-let g:ycm_global_ycm_extra_conf = '${HOME}/.ycm_extra_conf.py'
-let g:ycm_auto_trigger = 1
-let g:ycm_min_num_of_chars_for_completion = 3
-let g:ycm_autoclose_preview_window_after_insertion = 1
+" base
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8
+set bomb
+set binary
+set ttyfast
+set backspace=indent,eol,start
+set tabstop=4
+set softtabstop=0
+set shiftwidth=4
+set expandtab
+set splitright
 set splitbelow
+set hidden
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set nobackup
+set noswapfile
+set fileformats=unix,dos,mac
+syntax on
+set ruler
+set number
+set gcr=a:blinkon0
+set scrolloff=3
+set laststatus=2
+set modeline
+set modelines=10
+set title
+set titleold="Terminal"
+set titlestring=%F
+set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
+set autoread
+set noerrorbells visualbell t_vb=
+set clipboard+=unnamed,autoselect
+set mouse=a
+set whichwrap=b,s,h,l,<,>,[,]
 
+" template
+augroup templateGroup
+    autocmd!
+    autocmd BufNewFile *.html :0r ~/vim-template/t.html
+    autocmd BufNewFile *.cpp :0r ~/vim-template/t.cpp
+    autocmd BufNewFile *.py :0r ~/vim-template/t.py
+augroup END
+" snippet
+let g:UltiSnipsSnippetDirectories=["~/vim-snippets/"]
