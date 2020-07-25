@@ -8,9 +8,7 @@ set shiftwidth=4
 " Omni Complete
 set nocompatible
 filetype plugin on
-if has("autocmd")
-    autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-    autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
-endif
 
 inoremap <silent> jj <ESC>
+set syntax=markdown
+au BufRead,BufNewFile *.md set filetype=markdown
