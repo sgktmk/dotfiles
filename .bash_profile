@@ -14,4 +14,5 @@ fi
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
-eval `keychain --eval --agents ssh id_rsa` > /dev/null
+keychain ~/.ssh/id_rsa >/dev/null 2>/dev/null
+
