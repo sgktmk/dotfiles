@@ -5,6 +5,9 @@ set smartindent
 set tabstop=4
 set expandtab
 set shiftwidth=4
+set number
+set splitbelow
+set termwinsize=8x0
 
 " Omni Complete
 set nocompatible
@@ -22,6 +25,11 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'skanehira/preview-markdown.vim'
+Plug 'scrooloose/nerdtree'
 
 call plug#end()
 
+let g:preview_markdown_vertical = 1
+autocmd vimenter * term
+autocmd vimenter * NERDTree
