@@ -1,3 +1,4 @@
+" Ordinary Settings
 set ignorecase
 set smartcase
 set infercase
@@ -10,6 +11,7 @@ set relativenumber
 set splitbelow
 set termwinsize=8x0
 set noswapfile
+set hidden " buffer用
 
 " Omni Complete
 set nocompatible
@@ -17,6 +19,9 @@ filetype plugin on
 
 " escape
 inoremap <silent> jj <ESC>
+nnoremap <silent> <C-j> :bprev<CR>
+nnoremap <silent> <C-k> :bnext<CR>
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
 
 " markdown
 set syntax=markdown
