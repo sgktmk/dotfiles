@@ -13,6 +13,7 @@ set termwinsize=8x0
 set noswapfile
 set hidden " buffer用
 
+
 " Omni Complete
 set nocompatible
 filetype plugin on
@@ -22,6 +23,7 @@ inoremap <silent> jj <ESC>
 nnoremap <silent> <C-j> :bprev<CR>
 nnoremap <silent> <C-k> :bnext<CR>
 nnoremap <silent><C-e> :NERDTreeToggle<CR>
+nnoremap <silent><C-t> :term<CR>
 
 " markdown
 set syntax=markdown
@@ -38,9 +40,13 @@ call plug#begin()
     Plug 'skanehira/preview-markdown.vim'
     Plug 'scrooloose/nerdtree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
+    " Color Scheme
+    Plug 'tomasr/molokai'
 call plug#end()
 
+" Color Scheme
+colorscheme molokai
+
 let g:preview_markdown_vertical = 1
-autocmd vimenter * term
 autocmd vimenter * NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
