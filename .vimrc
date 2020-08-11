@@ -13,7 +13,6 @@ set termwinsize=8x0
 set noswapfile
 set hidden " buffer用
 
-
 " Omni Complete
 set nocompatible
 filetype plugin on
@@ -22,8 +21,8 @@ filetype plugin on
 inoremap <silent> jj <ESC>
 nnoremap <silent> <C-j> :bprev<CR>
 nnoremap <silent> <C-k> :bnext<CR>
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
-nnoremap <silent><C-t> :term<CR>
+nnoremap <silent> <C-e> :NERDTreeToggle<CR>
+nnoremap <silent> <C-t> :term<CR>
 
 " markdown
 set syntax=markdown
