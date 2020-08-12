@@ -16,11 +16,6 @@ set hidden " buffer用
 " Omni Complete
 set nocompatible
 filetype plugin on
-inoremap { {}<Left>
-inoremap [ []<Left>
-inoremap ( ()<Left>
-inoremap ' ''<LEFT>
-inoremap " ""<LEFT>
 
 " escape
 inoremap <silent> jj <ESC>
