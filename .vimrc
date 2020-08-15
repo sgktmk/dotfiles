@@ -41,15 +41,7 @@ call plug#begin()
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " Color Scheme
     Plug 'tomasr/molokai'
-    Plug 'lgranie/vim-lsp-java'
 call plug#end()
-let g:vim_lsp_java = {
-  \ 'eclipse_jdtls' : {
-    \ 'repository': expand('~/opt/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository'),
-    \ 'config': 'config_linux',
-    \ 'workspace': expand('$WORKSPACE'),
-  \ },
-\ }
 
 " Color Scheme
 colorscheme molokai
