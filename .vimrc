@@ -9,7 +9,7 @@ set shiftwidth=4
 set number
 set relativenumber
 set splitbelow
-set termwinsize=8x0
+set termwinsize=10x0
 set noswapfile
 set hidden " buffer用
 
