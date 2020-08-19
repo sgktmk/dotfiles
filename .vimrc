@@ -41,6 +41,8 @@ call plug#begin()
     Plug 'Xuyuanp/nerdtree-git-plugin'
     " Color Scheme
     Plug 'tomasr/molokai'
+    " coc.vim
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
 " Color Scheme
