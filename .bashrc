@@ -254,7 +254,7 @@ function colorize_by_host() {
 
 PROMPT_COLOR="\033[0;37;40m"
 #export PS1="${PROMPT_COLOR}[\u@\h:\w]${Color_Off}\$(init_prompt_git_branch)\$(prompt_right_aligned)${PROMPT_COLOR}===\D{%FT%T}===${Color_Off}\n\$ "
-export PS1="\n${PROMPT_COLOR}[\u@\h:\w]${Color_Off}\$(init_prompt_git_branch)\$(__show_status)\$(prompt_right_aligned)$(colorize_by_host)===\D{%FT%T}===${Color_Off}\n\$ "
+export PS1="\n\n[${Green}\u@\h${Color_Off} ${Cyan}\w${Color_Off}]\$(init_prompt_git_branch)\$(__show_status)\$(prompt_right_aligned)$(colorize_by_host)===\D{%FT%T}===${Color_Off}\n\$ "
 PROMPT_COMMAND=__prompt_command
 export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME:+$FUNCNAME(): }'
 
@@ -362,6 +362,10 @@ fi
 :
 
 
+<<<<<<< HEAD
 export NVM_DIR="$HOME/.nvm"
+=======
+export NVM_DIR="$HOME/.config/nvm"
+>>>>>>> 36d34e38cdfeacaf213802e9779e3247ae296598
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
