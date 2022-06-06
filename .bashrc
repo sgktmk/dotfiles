@@ -369,3 +369,10 @@ fi
 #>>>>>>> 36d34e38cdfeacaf213802e9779e3247ae296598
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+fbr() {
+    local branches branch
+    branches=$(git --no-pager branch -vv) &&
+    branch=$(echo "$branches" | fzf +m) &&
+    git checkout $(echo "$branch" | awk '{print $1}' | sed "s/.* //")
+}
